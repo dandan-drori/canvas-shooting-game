@@ -20,7 +20,8 @@ const resumeBtn = document.querySelector('.resume-btn')
 const rulesModalEl = document.querySelector('.rules-modal')
 const rulesBackBtn = document.querySelector('.rules-back-btn')
 const rulesBtn = document.querySelector('.rules-btn')
-
+const activeEffectEl = document.querySelector('.active-effect')
+const activeEffectTextEl = document.querySelector('.active-effect-text')
 class Player {
 	constructor(x, y, radius, color) {
 		this.x = x
@@ -109,6 +110,7 @@ class Bonus {
 			enemies = []
 			particles = []
 			bonuses = []
+			score += 1000
 		}
 		if (this.name === 'explosive-rounds') {
 			isExplosiveRoundsActivated = true
@@ -139,6 +141,13 @@ class Bonus {
 			modalEl.style.display = 'flex'
 			modalScoreEl.innerHTML = score
 		}
+		activeEffectEl.innerHTML = `${this.name.toUpperCase()}!`
+		activeEffectTextEl.classList.add('active')
+		activeEffectEl.classList.add('active')
+		setTimeout(() => {
+			activeEffectTextEl.classList.remove('active')
+			activeEffectEl.classList.remove('active')
+		}, 6000)
 	}
 }
 
@@ -200,92 +209,98 @@ const init = () => {
 	livesEl.innerHTML = lives
 }
 
-const spawnEnemies = () => {
-	setInterval(() => {
-		// randomize between 5-30
-		const radius = Math.random() * (30 - 5) + 5
-		let x
-		let y
+const spawnEnemiesIntervalFunction = () => {
+	// randomize between 5-30
+	const radius = Math.random() * (30 - 5) + 5
+	let x
+	let y
 
-		if (Math.random() < 0.5) {
-			// spawn enemies from left or right, across the entire screen height
-			x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius
-			y = Math.random() * canvas.height
-		} else {
-			// spawn enemies from top or bottom, across the entire screen width
-			x = Math.random() * canvas.width
-			y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius
+	if (Math.random() < 0.5) {
+		// spawn enemies from left or right, across the entire screen height
+		x = Math.random() < 0.5 ? 0 - radius : canvas.width + radius
+		y = Math.random() * canvas.height
+	} else {
+		// spawn enemies from top or bottom, across the entire screen width
+		x = Math.random() * canvas.width
+		y = Math.random() < 0.5 ? 0 - radius : canvas.height + radius
+	}
+	// randomize enemy color
+	const color = `hsl(${Math.random() * 360}, 50%, 50%)`
+
+	const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x)
+	let velocity
+	if (isSlowActivated) {
+		velocity = {
+			x: Math.cos(angle) / 2,
+			y: Math.sin(angle) / 2,
 		}
-		// randomize enemy color
-		const color = `hsl(${Math.random() * 360}, 50%, 50%)`
-
-		const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x)
-		let velocity
-		if (isSlowActivated) {
-			velocity = {
-				x: Math.cos(angle) / 2,
-				y: Math.sin(angle) / 2,
-			}
-		} else {
-			velocity = {
-				x: Math.cos(angle),
-				y: Math.sin(angle),
-			}
-		}
-
-		enemies.push(new Enemy(x, y, radius, color, velocity))
-	}, 1000)
-}
-
-const spawnBonuses = () => {
-	setInterval(() => {
-		// declare all bonuses types
-		const bonusTypes = [
-			{ name: 'slow', color: 'hsl(170, 50%, 50%)' },
-			{ name: 'sharp-shooter', color: 'hsl(220, 50%, 50%)' },
-			{ name: 'explosive-rounds', color: 'hsl(10, 50%, 50%)' },
-			{ name: 'extra-life', color: 'hsl(120, 50%, 50%)' },
-			{ name: 'nuke', color: 'hsl(60, 50%, 50%)' },
-			{ name: 'end-game', color: 'hsl(300, 50%, 50%)' },
-		]
-		let x
-		let y
-		let isVertical
-
-		if (Math.random() < 0.5) {
-			// spawn bonuses from left or right, at start or end of height
-			isVertical = false
-			x = Math.random() < 0.5 ? 0 - 10 : canvas.width + 10
-			y = Math.random() < 0.5 ? 0.2 * canvas.height : 0.8 * canvas.height
-		} else {
-			// spawn bonuses from top or bottom, at start of width or end of width
-			isVertical = true
-			x = Math.random() < 0.5 ? 0.2 * canvas.width : 0.8 * canvas.width
-			y = Math.random() < 0.5 ? 0 - 10 : canvas.height + 10
-		}
-
-		// choose a bonusType at random
-		const randomBonus = bonusTypes[Math.floor(Math.random() * 6)]
-		const color = randomBonus.color
-
-		let angle
-
-		// check if bonus is coming from top/bottom or left/right
-		if (isVertical) {
-			// if top, go to bottom. if bottom, go to top
-			angle = y < 0 ? Math.PI / 2 : -(Math.PI / 2)
-		} else {
-			// if left, go right. if right, go left
-			angle = x < 0 ? 0 : Math.PI
-		}
-
-		const velocity = {
+	} else {
+		velocity = {
 			x: Math.cos(angle),
 			y: Math.sin(angle),
 		}
+	}
 
-		bonuses.push(new Bonus(x, y, 15, 15, color, velocity, randomBonus.name))
-	}, 10000)
+	enemies.push(new Enemy(x, y, radius, color, velocity))
+}
+
+let spawnEnemiesInterval
+const spawnEnemies = () => {
+	spawnEnemiesInterval = setInterval(spawnEnemiesIntervalFunction, 1000)
+}
+
+const spawnBonusesIntervalFunction = () => {
+	// declare all bonuses types
+	const bonusTypes = [
+		{ name: 'slow', color: 'hsl(170, 50%, 50%)' },
+		{ name: 'sharp-shooter', color: 'hsl(220, 50%, 50%)' },
+		{ name: 'explosive-rounds', color: 'hsl(10, 50%, 50%)' },
+		{ name: 'extra-life', color: 'hsl(120, 50%, 50%)' },
+		{ name: 'nuke', color: 'hsl(60, 50%, 50%)' },
+		{ name: 'end-game', color: 'hsl(300, 50%, 50%)' },
+	]
+	let x
+	let y
+	let isVertical
+
+	if (Math.random() < 0.5) {
+		// spawn bonuses from left or right, at start or end of height
+		isVertical = false
+		x = Math.random() < 0.5 ? 0 - 10 : canvas.width + 10
+		y = Math.random() < 0.5 ? 0.2 * canvas.height : 0.8 * canvas.height
+	} else {
+		// spawn bonuses from top or bottom, at start of width or end of width
+		isVertical = true
+		x = Math.random() < 0.5 ? 0.2 * canvas.width : 0.8 * canvas.width
+		y = Math.random() < 0.5 ? 0 - 10 : canvas.height + 10
+	}
+
+	// choose a bonusType at random
+	const randomBonus = bonusTypes[Math.floor(Math.random() * 6)]
+	const color = randomBonus.color
+
+	let angle
+
+	// check if bonus is coming from top/bottom or left/right
+	if (isVertical) {
+		// if top, go to bottom. if bottom, go to top
+		angle = y < 0 ? Math.PI / 2 : -(Math.PI / 2)
+	} else {
+		// if left, go right. if right, go left
+		angle = x < 0 ? 0 : Math.PI
+	}
+
+	const velocity = {
+		x: Math.cos(angle),
+		y: Math.sin(angle),
+	}
+
+	bonuses.push(new Bonus(x, y, 15, 15, color, velocity, randomBonus.name))
+}
+
+let spawnBonusesInterval
+const spawnBonuses = () => {
+	spawnBonusesInterval = setInterval(spawnBonusesIntervalFunction, 10000)
 }
 
 let isGamePaused = false
@@ -333,7 +348,7 @@ const animate = () => {
 			// measure distance between each enemy and the player
 			const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y)
 
-			// enemy hits player - end game
+			// enemy hits player - end game - game over
 			if (dist - enemy.radius - player.radius < 1) {
 				if (lives === 1) {
 					// cancel all animations
@@ -341,9 +356,14 @@ const animate = () => {
 					// show modal and update score on UI
 					modalEl.style.display = 'flex'
 					modalScoreEl.innerHTML = score
+					// clear intervals for enemies and bonuses
+					clearInterval(spawnEnemiesIntervalFunction)
+					clearInterval(spawnBonusesIntervalFunction)
 				} else {
+					// lose one life and continue with the game
 					lives -= 1
 					livesEl.innerHTML = lives
+					// remove enemy so it wont keep killing you
 					setTimeout(() => {
 						enemies.splice(index, 1)
 					}, 0)
@@ -424,7 +444,7 @@ const animate = () => {
 				const dist = Math.hypot(projectile.x - bonus.x, projectile.y - bonus.y)
 
 				// projectile hits bonus
-				if (dist - 14 - projectile.radius < 1) {
+				if (dist - 10 - projectile.radius < 1) {
 					// add particles effect
 					for (let i = 0; i < 14 * 2; i++) {
 						particles.push(
@@ -454,8 +474,8 @@ const animate = () => {
 	}
 }
 
-// spawn projectiles on click
-addEventListener('click', e => {
+// spawn projectiles function to be used in event listener
+const spawnProjectiles = e => {
 	// get angle between click position and player to calculate velocity
 	const angle = Math.atan2(
 		e.clientY - canvas.height / 2,
@@ -477,7 +497,10 @@ addEventListener('click', e => {
 	projectiles.push(
 		new Projectile(canvas.width / 2, canvas.height / 2, 5, 'white', velocity)
 	)
-})
+}
+
+// spawn projectiles on click
+addEventListener('click', spawnProjectiles)
 
 // when restart/start btn is clicked, start game
 startGameBtn.addEventListener('click', () => {
@@ -492,12 +515,18 @@ startGameBtn.addEventListener('click', () => {
 settingsBtn.addEventListener('click', () => {
 	settingsModalEl.style.display = 'flex'
 	isGamePaused = true
+	window.removeEventListener('click', spawnProjectiles)
+	clearInterval(spawnEnemiesInterval)
+	clearInterval(spawnBonusesInterval)
 })
 
 resumeBtn.addEventListener('click', () => {
 	settingsModalEl.style.display = 'none'
 	isGamePaused = false
+	window.addEventListener('click', spawnProjectiles)
 	animate()
+	setInterval(spawnEnemiesIntervalFunction, 1000)
+	setInterval(spawnBonusesIntervalFunction, 10000)
 })
 
 rulesBtn.addEventListener('click', () => {
