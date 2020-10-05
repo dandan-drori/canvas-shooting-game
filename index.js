@@ -5,6 +5,9 @@ const c = canvas.getContext('2d')
 canvas.width = innerWidth
 canvas.height = innerHeight
 
+// check if device is mobile
+const isMobile = canvas.width <= 768 ? true : false
+
 // get elements references
 const scoreEl = document.querySelector('.score-value')
 const startGameBtn = document.querySelector('.start-game-btn')
@@ -68,6 +71,28 @@ class Enemy {
 		this.y = this.y + this.velocity.y
 	}
 }
+class Bonus {
+	constructor(x, y, width, height, color, velocity) {
+		this.x = x
+		this.y = y
+		this.width = width
+		this.height = height
+		this.color = color
+		this.velocity = velocity
+	}
+	draw() {
+		c.beginPath()
+		c.rect(this.x, this.y, this.width, this.height)
+		c.lineWidth = '1'
+		c.strokeStyle = this.color
+		c.stroke()
+	}
+	update() {
+		this.draw()
+		this.x = this.x + this.velocity.x
+		this.y = this.y + this.velocity.y
+	}
+}
 
 // instantiate friction variable to decrease particle speed
 const friction = 0.99
@@ -107,6 +132,7 @@ let player = new Player(x, y, 20, 'white')
 let projectiles = []
 let enemies = []
 let particles = []
+let bonuses = []
 
 // initialization function to be called when game starts/restarts
 const init = () => {
@@ -114,6 +140,7 @@ const init = () => {
 	projectiles = []
 	enemies = []
 	particles = []
+	bonuses = []
 	score = 0
 	scoreEl.innerHTML = score
 	modalScoreEl.innerHTML = score
@@ -146,6 +173,52 @@ const spawnEnemies = () => {
 
 		enemies.push(new Enemy(x, y, radius, color, velocity))
 	}, 1500)
+}
+
+const spawnBonuses = () => {
+	setInterval(() => {
+		const bonusTypes = [
+			{ name: 'slow', color: 'hsl(170, 50%, 50%)' },
+			{ name: 'fast-attack', color: 'hsl(280, 50%, 50%)' },
+			{ name: 'explosive-rounds', color: 'hsl(10, 50%, 50%)' },
+			{ name: 'extra-life', color: 'hsl(120, 50%, 50%)' },
+			{ name: 'nuke', color: 'hsl(60, 50%, 50%)' },
+		]
+		let x
+		let y
+		let isVertical
+		let isTop
+		let isLeft
+
+		if (Math.random() < 0.5) {
+			// spawn bonuses from left or right, at start or end of height
+			isVertical = false
+			x = Math.random() < 0.5 ? 0 - 10 : canvas.width + 10
+			y = Math.random() < 0.5 ? 0.2 * canvas.height : 0.8 * canvas.height
+		} else {
+			// spawn bonuses from top or bottom, at start of width or end of width
+			isVertical = true
+			x = Math.random() < 0.5 ? 0.2 * canvas.width : 0.8 * canvas.width
+			y = Math.random() < 0.5 ? 0 - 10 : canvas.height + 10
+		}
+
+		const color = bonusTypes[Math.floor(Math.random() * 4)].color
+
+		let angle
+
+		if (isVertical) {
+			angle = y < 0 ? 1.5708 : -1.5708
+		} else {
+			angle = x < 0 ? 0 : 3.14
+		}
+
+		const velocity = {
+			x: Math.cos(angle),
+			y: Math.sin(angle),
+		}
+
+		bonuses.push(new Bonus(x, y, 10, 10, color, velocity))
+	}, 10000)
 }
 
 let animationId
@@ -251,6 +324,43 @@ const animate = () => {
 			}
 		})
 	})
+	// loop over bonuses
+	bonuses.forEach((bonus, index) => {
+		bonus.update()
+
+		// for each bonus, loop over projectiles
+		projectiles.forEach((projectile, projectileIndex) => {
+			// measure distance between bonus and all projectiles
+			const dist = Math.hypot(projectile.x - bonus.x, projectile.y - bonus.y)
+
+			// projectile hits bonus
+			if (dist - 14 - projectile.radius < 1) {
+				// add particles effect
+				for (let i = 0; i < 14 * 2; i++) {
+					particles.push(
+						new Particle(
+							projectile.x,
+							projectile.y,
+							Math.random() * 2,
+							bonus.color,
+							{
+								x: (Math.random() - 0.5) * (Math.random() * 6),
+								y: Math.random() - 0.5 * (Math.random() * 6),
+							}
+						)
+					)
+				}
+				// active bonus effect
+				// TODO: active bonus effect
+
+				// remove enemy and projectile
+				setTimeout(() => {
+					bonuses.splice(index, 1)
+					projectiles.splice(projectileIndex, 1)
+				}, 0)
+			}
+		})
+	})
 }
 
 // spawn projectiles on click
@@ -275,5 +385,6 @@ startGameBtn.addEventListener('click', () => {
 	init()
 	animate()
 	spawnEnemies()
+	spawnBonuses()
 	modalEl.style.display = 'none'
 })
