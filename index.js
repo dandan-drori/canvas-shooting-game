@@ -22,6 +22,7 @@ const rulesBackBtn = document.querySelector('.rules-back-btn')
 const rulesBtn = document.querySelector('.rules-btn')
 const activeEffectEl = document.querySelector('.active-effect')
 const activeEffectTextEl = document.querySelector('.active-effect-text')
+const highscoreEl = document.querySelector('.modal-highscore-value')
 class Player {
 	constructor(x, y, radius, color) {
 		this.x = x
@@ -356,6 +357,23 @@ const animate = () => {
 					// show modal and update score on UI
 					modalEl.style.display = 'flex'
 					modalScoreEl.innerHTML = score
+					// get currentHighScore from localStorage
+					const currentHighScore = localStorage.getItem('currentHighScore')
+					// if it exits:
+					if (currentHighScore) {
+						// if score > currentHighScore:
+						if (score > currentHighScore) {
+							// replace currentHighScore in localStorage with score
+							localStorage.setItem('currentHighScore', score)
+							// update highscore in UI
+							highscoreEl.innerHTML = score
+						}
+						// else - don't do anything
+					} else {
+						// else - just save score to localStorage W/O check
+						localStorage.setItem('currentHighScore', score)
+					}
+
 					// clear intervals for enemies and bonuses
 					clearInterval(spawnEnemiesIntervalFunction)
 					clearInterval(spawnBonusesIntervalFunction)

@@ -242,6 +242,10 @@ body {
 	transform: translateX(-70%) translateY(0px) scale(0.9, 0.9);
 }
 
+.modal-highscore {
+	color: #555;
+}
+
 @media only screen and (max-width: 768px) {
 	.modal-content-container {
 		padding: 2rem 5rem;
