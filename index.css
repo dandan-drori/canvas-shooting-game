@@ -1,5 +1,6 @@
 body {
 	margin: 0;
+	padding: 0;
 	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 	box-sizing: border-box;
 	background-color: black;
@@ -10,6 +11,18 @@ body {
 	color: white;
 	font-size: 1em;
 	margin-left: 2rem;
+	margin-top: 1rem;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+.lives-text {
+	position: fixed;
+	color: white;
+	right: 50%;
+	transform: translateX(50%);
+	font-size: 1em;
 	margin-top: 1rem;
 	user-select: none;
 	-moz-user-select: none;
@@ -64,8 +77,150 @@ body {
 	opacity: 0.9;
 }
 
+.settings-btn {
+	position: fixed;
+	right: 0;
+	margin-right: 2rem;
+	margin-top: 1rem;
+	background: none;
+	color: white;
+	border: none;
+	outline: none;
+	cursor: pointer;
+}
+
+.settings-modal {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.settings-modal-content-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: white;
+	max-width: 50%;
+	padding: 2rem 10rem;
+	border-radius: 0.5rem;
+}
+
+.settings-modal-content-container h1 {
+	line-height: 0;
+	margin-bottom: 2rem;
+}
+
+.settings-modal-content-container p {
+	font-size: 0.9em;
+	color: #555;
+	line-height: 0;
+	margin-bottom: 2rem;
+}
+
+.resume-btn {
+	background: none;
+	border: 2px solid #23b9ff;
+	border-radius: 0.3rem;
+	padding: 0.3rem 0.5rem;
+	cursor: pointer;
+	outline: none;
+	font-size: 1.4em;
+	color: #23b9ff;
+}
+
+.resume-btn:hover {
+	color: #109ddf;
+	border: 2px solid #109ddf;
+	opacity: 0.9;
+}
+
+.nav-item {
+	list-style: none;
+	transform: translateX(-37%);
+	padding-bottom: 0.2rem;
+}
+
+.nav-link {
+	background: none;
+	outline: none;
+	cursor: pointer;
+	border: none;
+	font-size: 1.5em;
+}
+
+.rules-modal {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.rules-modal-content-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: white;
+	max-width: 50%;
+	padding: 2rem 10rem;
+	border-radius: 0.5rem;
+	max-height: 80%;
+}
+
+.rules-modal-header {
+	line-height: 0;
+	margin-bottom: 1rem;
+}
+
+.rules-modal-scroll-wrapper {
+	overflow: scroll;
+}
+
+.bonus-color {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	padding: 0.5rem;
+}
+
+.slow {
+	background-color: hsl(170, 50%, 50%);
+}
+
+.sharp-shooter {
+	background-color: hsl(220, 50%, 50%);
+}
+
+.explosive-rounds {
+	background-color: hsl(10, 50%, 50%);
+}
+
+.extra-life {
+	background-color: hsl(120, 50%, 50%);
+}
+
+.nuke {
+	background-color: hsl(60, 50%, 50%);
+}
+
+.skull {
+	background-color: hsl(300, 50%, 50%);
+}
+
 @media only screen and (max-width: 768px) {
 	.modal-content-container {
+		padding: 2rem 5rem;
+	}
+	.settings-modal-content-container {
+		padding: 2rem 5rem;
+	}
+	.rules-modal-content-container {
 		padding: 2rem 5rem;
 	}
 }

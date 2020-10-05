@@ -1,5 +1,6 @@
 <meta name="viewport" content="width=device-width, user-scalable=no">
 <link rel="stylesheet" href="./index.css"></link>
+
 <div class="modal">
 	<div class="modal-content-container">
 		<h1 class="modal-score-value">0</h1>
@@ -10,8 +11,78 @@
 	</div>
 </div>
 
+<div class="settings-modal">
+	<div class="settings-modal-content-container">
+		<h1 class="settings-modal-header">Settings</h1>
+		<ul class="nav-list">
+			<li class="nav-item">
+				<button class="nav-link about-btn">About</button>
+			</li>
+			<li class="nav-item">
+				<button class="nav-link rules-btn">Rules</button>
+			</li>
+		</ul>
+		<div>
+			<button class="resume-btn">Resume</button>
+		</div>
+	</div>
+</div>
+
+<div class="rules-modal">
+	<div class="rules-modal-content-container">
+		<div class="rules-modal-scroll-wrapper">
+			<h1 class="rules-modal-header">Rules</h1>
+			<br />
+			<!-- <p>The objective is to survive as long as you can.</p> -->
+			<p>The game is comprised of the following pieces:</p>
+			<p>Player, Enemies and Bonuses.</p>
+			<h3>The Player:</h3>
+			<p>The Player is a white circle and located at the center of the screen.</p>
+			<p>The Player dies when an Enemy hits him.</p>
+			<p>The Player may shoot Projectiles by clicking / pressing on the screen, in order to hit Enemies, which in turn will destroy them.</p>
+			<h3>The Enemies:</h3>
+			<p>The Enemies are colorful circles that randomly spawn at the edges of the screen.</p>
+			<p>When an Enemy hits the Player, the game is over.</p>
+			<p>The Enemies vary in size:</p>
+			<p>When a Projectile hits a small* Enemy, they both are destroyed.</p>
+			<p>When a Projectile hits a big* Enemy, the Enemy shrink and the Projectile is destroyed.</p>
+			<h3>The Bonuses:</h3>
+			<p>There are 6 types of Bonuses: Slow, Sharp Shooter, Explosive Rounds, Extra Life, Nuke and Skull.</p>
+			<p>Each Bonus is a hollow square, with a different color.</p>
+			<p>When a Projectile hits a Bonus, a special effect takes place, as described bellow.</p>
+			<h4>Slow:</h4>
+			<p>Color: <span class="bonus-color slow"></span></p>
+			<p>Effect: Reduce all Enemies speed by half.</p>
+			<h4>Sharp Shooter:</h4>
+			<p>Color: <span class="bonus-color sharp-shooter"></span></p>
+			<p>Effect: Make the Player shoot Projectiles 20% faster.</p>
+			<h4>Explosive Rounds:</h4>
+			<p>Color: <span class="bonus-color explosive-rounds"></span></p>
+			<p>Effect: When a Projectile hits an Enemy, it destroys it regardless of its size.</p>
+			<h4>Extra Life:</h4>
+			<p>Color: <span class="bonus-color extra-life"></span></p>
+			<p>Effect: Gain an extra life.</p>
+			<h4>Nuke:</h4>
+			<p>Color: <span class="bonus-color nuke"></span></p>
+			<p>Effect: Destroy all Enemies on the screen.</p>
+			<h4>Skull:</h4>
+			<p>Color: <span class="bonus-color skull"></span></p>
+			<p>Effect: Lose game instantly, regardless of the Player's amount of life.</p>
+		</div>
+		<div>
+			<button class="rules-back-btn">Back</button>
+		</div>
+	</div>
+</div>
+
 <div>
 	<span class="score-text">Score: <span class="score-value">0</span></span>
+</div>
+<div>
+	<span class="lives-text">Lives: x<span class="lives-value">1</span><span> &#10084;</span></span>
+</div>
+<div>
+	<button class="settings-btn">settings</button>
 </div>
 <canvas></canvas>
 

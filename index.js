@@ -13,6 +13,13 @@ const scoreEl = document.querySelector('.score-value')
 const startGameBtn = document.querySelector('.start-game-btn')
 const modalEl = document.querySelector('.modal')
 const modalScoreEl = document.querySelector('.modal-score-value')
+const settingsModalEl = document.querySelector('.settings-modal')
+const settingsBtn = document.querySelector('.settings-btn')
+const livesEl = document.querySelector('.lives-value')
+const resumeBtn = document.querySelector('.resume-btn')
+const rulesModalEl = document.querySelector('.rules-modal')
+const rulesBackBtn = document.querySelector('.rules-back-btn')
+const rulesBtn = document.querySelector('.rules-btn')
 
 class Player {
 	constructor(x, y, radius, color) {
@@ -72,13 +79,14 @@ class Enemy {
 	}
 }
 class Bonus {
-	constructor(x, y, width, height, color, velocity) {
+	constructor(x, y, width, height, color, velocity, name) {
 		this.x = x
 		this.y = y
 		this.width = width
 		this.height = height
 		this.color = color
 		this.velocity = velocity
+		this.name = name
 	}
 	draw() {
 		c.beginPath()
@@ -91,6 +99,46 @@ class Bonus {
 		this.draw()
 		this.x = this.x + this.velocity.x
 		this.y = this.y + this.velocity.y
+	}
+	activateEffect() {
+		if (this.name === 'nuke') {
+			c.fillStyle = 'rgba(0,0,0,0.1)'
+			c.fillRect(0, 0, canvas.width, canvas.height)
+			player.draw()
+			projectiles = []
+			enemies = []
+			particles = []
+			bonuses = []
+		}
+		if (this.name === 'explosive-rounds') {
+			isExplosiveRoundsActivated = true
+			setTimeout(() => {
+				isExplosiveRoundsActivated = false
+			}, 5000)
+		}
+		if (this.name === 'sharp-shooter') {
+			isSharpShooterActivated = true
+			setTimeout(() => {
+				isSharpShooterActivated = false
+			}, 5000)
+		}
+		if (this.name === 'slow') {
+			isSlowActivated = true
+			setTimeout(() => {
+				isSlowActivated = false
+			}, 5000)
+		}
+		if (this.name === 'extra-life') {
+			lives++
+			livesEl.innerHTML = lives
+		}
+		if (this.name === 'end-game') {
+			// cancel all animations
+			cancelAnimationFrame(animationId)
+			// show modal and update score on UI
+			modalEl.style.display = 'flex'
+			modalScoreEl.innerHTML = score
+		}
 	}
 }
 
@@ -133,6 +181,7 @@ let projectiles = []
 let enemies = []
 let particles = []
 let bonuses = []
+let lives = 1
 
 // initialization function to be called when game starts/restarts
 const init = () => {
@@ -141,9 +190,14 @@ const init = () => {
 	enemies = []
 	particles = []
 	bonuses = []
+	isExplosiveRoundsActivated = false
+	isSlowActivated = false
+	isSharpShooterActivated = false
 	score = 0
 	scoreEl.innerHTML = score
 	modalScoreEl.innerHTML = score
+	lives = 1
+	livesEl.innerHTML = lives
 }
 
 const spawnEnemies = () => {
@@ -166,29 +220,37 @@ const spawnEnemies = () => {
 		const color = `hsl(${Math.random() * 360}, 50%, 50%)`
 
 		const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x)
-		const velocity = {
-			x: Math.cos(angle),
-			y: Math.sin(angle),
+		let velocity
+		if (isSlowActivated) {
+			velocity = {
+				x: Math.cos(angle) / 2,
+				y: Math.sin(angle) / 2,
+			}
+		} else {
+			velocity = {
+				x: Math.cos(angle),
+				y: Math.sin(angle),
+			}
 		}
 
 		enemies.push(new Enemy(x, y, radius, color, velocity))
-	}, 1500)
+	}, 1000)
 }
 
 const spawnBonuses = () => {
 	setInterval(() => {
+		// declare all bonuses types
 		const bonusTypes = [
 			{ name: 'slow', color: 'hsl(170, 50%, 50%)' },
-			{ name: 'fast-attack', color: 'hsl(280, 50%, 50%)' },
+			{ name: 'sharp-shooter', color: 'hsl(220, 50%, 50%)' },
 			{ name: 'explosive-rounds', color: 'hsl(10, 50%, 50%)' },
 			{ name: 'extra-life', color: 'hsl(120, 50%, 50%)' },
 			{ name: 'nuke', color: 'hsl(60, 50%, 50%)' },
+			{ name: 'end-game', color: 'hsl(300, 50%, 50%)' },
 		]
 		let x
 		let y
 		let isVertical
-		let isTop
-		let isLeft
 
 		if (Math.random() < 0.5) {
 			// spawn bonuses from left or right, at start or end of height
@@ -202,14 +264,19 @@ const spawnBonuses = () => {
 			y = Math.random() < 0.5 ? 0 - 10 : canvas.height + 10
 		}
 
-		const color = bonusTypes[Math.floor(Math.random() * 4)].color
+		// choose a bonusType at random
+		const randomBonus = bonusTypes[Math.floor(Math.random() * 6)]
+		const color = randomBonus.color
 
 		let angle
 
+		// check if bonus is coming from top/bottom or left/right
 		if (isVertical) {
-			angle = y < 0 ? 1.5708 : -1.5708
+			// if top, go to bottom. if bottom, go to top
+			angle = y < 0 ? Math.PI / 2 : -(Math.PI / 2)
 		} else {
-			angle = x < 0 ? 0 : 3.14
+			// if left, go right. if right, go left
+			angle = x < 0 ? 0 : Math.PI
 		}
 
 		const velocity = {
@@ -217,150 +284,174 @@ const spawnBonuses = () => {
 			y: Math.sin(angle),
 		}
 
-		bonuses.push(new Bonus(x, y, 10, 10, color, velocity))
+		bonuses.push(new Bonus(x, y, 15, 15, color, velocity, randomBonus.name))
 	}, 10000)
 }
 
+let isGamePaused = false
 let animationId
 let score = 0
 // render all canvas objects on the screen
 const animate = () => {
-	animationId = requestAnimationFrame(animate)
-	c.fillStyle = 'rgba(0,0,0,0.1)'
-	c.fillRect(0, 0, canvas.width, canvas.height)
-	player.draw()
+	if (!isGamePaused) {
+		animationId = requestAnimationFrame(animate)
+		c.fillStyle = 'rgba(0,0,0,0.1)'
+		c.fillRect(0, 0, canvas.width, canvas.height)
+		player.draw()
 
-	// loop over particles
-	particles.forEach((particle, index) => {
-		// if particle should be removed, remove it, else, keep updating it
-		if (particle.alpha <= 0) {
-			particles.splice(index, 1)
-		} else {
-			particle.update()
-		}
-	})
-
-	// loop over projectiles
-	projectiles.forEach((projectile, index) => {
-		projectile.update()
-
-		// remove projectiles once they pass the edges of the screen
-		if (
-			projectile.x + projectile.radius < 0 ||
-			projectile.x - projectile.radius > canvas.width ||
-			projectile.y + projectile.radius < 0 ||
-			projectile.y - projectile.radius > canvas.height
-		) {
-			setTimeout(() => {
-				projectiles.splice(index, 1)
-			}, 0)
-		}
-	})
-
-	// loop over enemies
-	enemies.forEach((enemy, index) => {
-		enemy.update()
-
-		// measure distance between each enemy and the player
-		const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y)
-
-		// enemy hits player - end game
-		if (dist - enemy.radius - player.radius < 1) {
-			cancelAnimationFrame(animationId)
-			// show modal and update score on UI
-			modalEl.style.display = 'flex'
-			modalScoreEl.innerHTML = score
-		}
-
-		// for each enemy, loop over projectiles
-		projectiles.forEach((projectile, projectileIndex) => {
-			// measure distance between enemy and all projectiles
-			const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
-
-			// projectile hits enemy
-			if (dist - enemy.radius - projectile.radius < 1) {
-				// add particles effect
-				for (let i = 0; i < enemy.radius * 2; i++) {
-					particles.push(
-						new Particle(
-							projectile.x,
-							projectile.y,
-							Math.random() * 2,
-							enemy.color,
-							{
-								x: (Math.random() - 0.5) * (Math.random() * 6),
-								y: Math.random() - 0.5 * (Math.random() * 6),
-							}
-						)
-					)
-				}
-
-				// determine if enemy should shrink or be destroyed
-				if (enemy.radius - 10 > 5) {
-					// increase score by 100
-					score += 100
-					scoreEl.innerHTML = score
-
-					// shrink enemy
-					gsap.to(enemy, {
-						radius: enemy.radius - 10,
-					})
-					enemy.radius -= 10
-					// remove projectile
-					setTimeout(() => {
-						projectiles.splice(projectileIndex, 1)
-					}, 0)
-				} else {
-					// increase score by 250
-					score += 250
-					scoreEl.innerHTML = score
-
-					// remove enemy and projectile
-					setTimeout(() => {
-						enemies.splice(index, 1)
-						projectiles.splice(projectileIndex, 1)
-					}, 0)
-				}
+		// loop over particles
+		particles.forEach((particle, index) => {
+			// if particle should be removed, remove it, else, keep updating it
+			if (particle.alpha <= 0) {
+				particles.splice(index, 1)
+			} else {
+				particle.update()
 			}
 		})
-	})
-	// loop over bonuses
-	bonuses.forEach((bonus, index) => {
-		bonus.update()
 
-		// for each bonus, loop over projectiles
-		projectiles.forEach((projectile, projectileIndex) => {
-			// measure distance between bonus and all projectiles
-			const dist = Math.hypot(projectile.x - bonus.x, projectile.y - bonus.y)
+		// loop over projectiles
+		projectiles.forEach((projectile, index) => {
+			projectile.update()
 
-			// projectile hits bonus
-			if (dist - 14 - projectile.radius < 1) {
-				// add particles effect
-				for (let i = 0; i < 14 * 2; i++) {
-					particles.push(
-						new Particle(
-							projectile.x,
-							projectile.y,
-							Math.random() * 2,
-							bonus.color,
-							{
-								x: (Math.random() - 0.5) * (Math.random() * 6),
-								y: Math.random() - 0.5 * (Math.random() * 6),
-							}
-						)
-					)
-				}
-				// active bonus effect
-				// TODO: active bonus effect
-
-				// remove enemy and projectile
+			// remove projectiles once they pass the edges of the screen
+			if (
+				projectile.x + projectile.radius < 0 ||
+				projectile.x - projectile.radius > canvas.width ||
+				projectile.y + projectile.radius < 0 ||
+				projectile.y - projectile.radius > canvas.height
+			) {
 				setTimeout(() => {
-					bonuses.splice(index, 1)
-					projectiles.splice(projectileIndex, 1)
+					projectiles.splice(index, 1)
 				}, 0)
 			}
 		})
-	})
+
+		// loop over enemies
+		enemies.forEach((enemy, index) => {
+			enemy.update()
+
+			// measure distance between each enemy and the player
+			const dist = Math.hypot(player.x - enemy.x, player.y - enemy.y)
+
+			// enemy hits player - end game
+			if (dist - enemy.radius - player.radius < 1) {
+				if (lives === 1) {
+					// cancel all animations
+					cancelAnimationFrame(animationId)
+					// show modal and update score on UI
+					modalEl.style.display = 'flex'
+					modalScoreEl.innerHTML = score
+				} else {
+					lives -= 1
+					livesEl.innerHTML = lives
+					setTimeout(() => {
+						enemies.splice(index, 1)
+					}, 0)
+				}
+			}
+
+			// for each enemy, loop over projectiles
+			projectiles.forEach((projectile, projectileIndex) => {
+				// measure distance between enemy and all projectiles
+				const dist = Math.hypot(projectile.x - enemy.x, projectile.y - enemy.y)
+
+				// projectile hits enemy
+				if (dist - enemy.radius - projectile.radius < 1) {
+					// add particles effect
+					for (let i = 0; i < enemy.radius * 2; i++) {
+						particles.push(
+							new Particle(
+								projectile.x,
+								projectile.y,
+								Math.random() * 2,
+								enemy.color,
+								{
+									x: (Math.random() - 0.5) * (Math.random() * 6),
+									y: Math.random() - 0.5 * (Math.random() * 6),
+								}
+							)
+						)
+					}
+
+					// determine if enemy should shrink or be destroyed
+					if (!isExplosiveRoundsActivated) {
+						if (enemy.radius - 10 > 5) {
+							// increase score by 100
+							score += 100
+							scoreEl.innerHTML = score
+
+							// shrink enemy
+							gsap.to(enemy, {
+								radius: enemy.radius - 10,
+							})
+							enemy.radius -= 10
+							// remove projectile
+							setTimeout(() => {
+								projectiles.splice(projectileIndex, 1)
+							}, 0)
+						} else {
+							// increase score by 250
+							score += 250
+							scoreEl.innerHTML = score
+
+							// remove enemy and projectile
+							setTimeout(() => {
+								enemies.splice(index, 1)
+								projectiles.splice(projectileIndex, 1)
+							}, 0)
+						}
+					} else {
+						// increase score by 250
+						score += 250
+						scoreEl.innerHTML = score
+
+						// remove enemy and projectile
+						setTimeout(() => {
+							enemies.splice(index, 1)
+							projectiles.splice(projectileIndex, 1)
+						}, 0)
+					}
+				}
+			})
+		})
+		// loop over bonuses
+		bonuses.forEach((bonus, index) => {
+			bonus.update()
+
+			// for each bonus, loop over projectiles
+			projectiles.forEach((projectile, projectileIndex) => {
+				// measure distance between bonus and all projectiles
+				const dist = Math.hypot(projectile.x - bonus.x, projectile.y - bonus.y)
+
+				// projectile hits bonus
+				if (dist - 14 - projectile.radius < 1) {
+					// add particles effect
+					for (let i = 0; i < 14 * 2; i++) {
+						particles.push(
+							new Particle(
+								projectile.x,
+								projectile.y,
+								Math.random() * 2,
+								bonus.color,
+								{
+									x: (Math.random() - 0.5) * (Math.random() * 6),
+									y: Math.random() - 0.5 * (Math.random() * 6),
+								}
+							)
+						)
+					}
+					// activate bonus effect
+					bonus.activateEffect()
+
+					// remove enemy and projectile
+					setTimeout(() => {
+						bonuses.splice(index, 1)
+						projectiles.splice(projectileIndex, 1)
+					}, 0)
+				}
+			})
+		})
+	}
 }
 
 // spawn projectiles on click
@@ -370,9 +461,17 @@ addEventListener('click', e => {
 		e.clientY - canvas.height / 2,
 		e.clientX - canvas.width / 2
 	)
-	const velocity = {
-		x: Math.cos(angle) * 5,
-		y: Math.sin(angle) * 5,
+	let velocity
+	if (isSharpShooterActivated) {
+		velocity = {
+			x: Math.cos(angle) * 7,
+			y: Math.sin(angle) * 7,
+		}
+	} else {
+		velocity = {
+			x: Math.cos(angle) * 5,
+			y: Math.sin(angle) * 5,
+		}
 	}
 	// instantiate a new projectile by adding it to the projectiles array
 	projectiles.push(
@@ -387,4 +486,24 @@ startGameBtn.addEventListener('click', () => {
 	spawnEnemies()
 	spawnBonuses()
 	modalEl.style.display = 'none'
+	settingsModalEl.style.display = 'none'
+})
+
+settingsBtn.addEventListener('click', () => {
+	settingsModalEl.style.display = 'flex'
+	isGamePaused = true
+})
+
+resumeBtn.addEventListener('click', () => {
+	settingsModalEl.style.display = 'none'
+	isGamePaused = false
+	animate()
+})
+
+rulesBtn.addEventListener('click', () => {
+	rulesModalEl.style.display = 'flex'
+})
+
+rulesBackBtn.addEventListener('click', () => {
+	rulesModalEl.style.display = 'none'
 })
