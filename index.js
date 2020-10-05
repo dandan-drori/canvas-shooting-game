@@ -360,9 +360,9 @@ const animate = () => {
 					// get currentHighScore from localStorage
 					const currentHighScore = localStorage.getItem('currentHighScore')
 					// if it exits:
-					if (currentHighScore) {
+					if (currentHighScore !== null) {
 						// if score > currentHighScore:
-						if (score > currentHighScore) {
+						if (score > +currentHighScore) {
 							// replace currentHighScore in localStorage with score
 							localStorage.setItem('currentHighScore', score)
 							// update highscore in UI
@@ -371,12 +371,12 @@ const animate = () => {
 						// else - don't do anything
 					} else {
 						// else - just save score to localStorage W/O check
-						localStorage.setItem('currentHighScore', score)
+						// localStorage.setItem('currentHighScore', score)
 					}
 
 					// clear intervals for enemies and bonuses
-					clearInterval(spawnEnemiesIntervalFunction)
-					clearInterval(spawnBonusesIntervalFunction)
+					clearInterval(spawnEnemiesInterval)
+					clearInterval(spawnBonusesInterval)
 				} else {
 					// lose one life and continue with the game
 					lives -= 1
@@ -543,8 +543,8 @@ resumeBtn.addEventListener('click', () => {
 	isGamePaused = false
 	window.addEventListener('click', spawnProjectiles)
 	animate()
-	setInterval(spawnEnemiesIntervalFunction, 1000)
-	setInterval(spawnBonusesIntervalFunction, 10000)
+	spawnEnemies()
+	spawnBonuses()
 })
 
 rulesBtn.addEventListener('click', () => {
