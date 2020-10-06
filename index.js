@@ -23,6 +23,9 @@ const rulesBtn = document.querySelector('.rules-btn')
 const activeEffectEl = document.querySelector('.active-effect')
 const activeEffectTextEl = document.querySelector('.active-effect-text')
 const highscoreEl = document.querySelector('.modal-highscore-value')
+const aboutBtn = document.querySelector('.about-btn')
+const aboutModalEl = document.querySelector('.about-modal')
+const aboutBackBtn = document.querySelector('.about-back-btn')
 class Player {
 	constructor(x, y, radius, color) {
 		this.x = x
@@ -521,36 +524,44 @@ const spawnProjectiles = e => {
 addEventListener('click', spawnProjectiles)
 
 // when restart/start btn is clicked, start game
-startGameBtn.addEventListener('click', () => {
+const handleStartGameBtnClick = () => {
 	init()
 	animate()
 	spawnEnemies()
 	spawnBonuses()
 	modalEl.style.display = 'none'
 	settingsModalEl.style.display = 'none'
-})
+}
 
-settingsBtn.addEventListener('click', () => {
+const handleSettingsBtnClick = () => {
 	settingsModalEl.style.display = 'flex'
 	isGamePaused = true
 	window.removeEventListener('click', spawnProjectiles)
 	clearInterval(spawnEnemiesInterval)
 	clearInterval(spawnBonusesInterval)
-})
+}
 
-resumeBtn.addEventListener('click', () => {
+const handleResumeBtnClick = () => {
 	settingsModalEl.style.display = 'none'
 	isGamePaused = false
 	window.addEventListener('click', spawnProjectiles)
 	animate()
 	spawnEnemies()
 	spawnBonuses()
-})
+}
 
-rulesBtn.addEventListener('click', () => {
+const handleRulesBtnClick = () => {
 	rulesModalEl.style.display = 'flex'
-})
+}
 
-rulesBackBtn.addEventListener('click', () => {
+const handleRulesBackBtnClick = () => {
 	rulesModalEl.style.display = 'none'
-})
+}
+
+const handleAboutBtnClick = () => {
+	aboutModalEl.style.display = 'flex'
+}
+
+const handleAboutBackBtnClick = () => {
+	aboutModalEl.style.display = 'none'
+}

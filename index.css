@@ -171,9 +171,9 @@ body {
 	align-items: center;
 	background-color: white;
 	max-width: 50%;
+	max-height: 80%;
 	padding: 2rem 10rem;
 	border-radius: 0.5rem;
-	max-height: 80%;
 }
 
 .rules-modal-header {
@@ -183,6 +183,60 @@ body {
 
 .rules-modal-scroll-wrapper {
 	overflow: scroll;
+}
+
+.rules-back-btn {
+	margin-top: 1rem;
+	background: none;
+	border: 2px solid #23b9ff;
+	border-radius: 0.3rem;
+	padding: 0.2rem 0.4rem;
+	cursor: pointer;
+	outline: none;
+	font-size: 1.2em;
+	color: #23b9ff;
+}
+
+.about-modal {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.about-modal-content-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: white;
+	max-width: 50%;
+	max-height: 80%;
+	padding: 2rem 4rem;
+	border-radius: 0.5rem;
+}
+
+.about-modal-header {
+	line-height: 0;
+	margin-bottom: 1rem;
+}
+
+.about-modal-scroll-wrapper {
+	/* overflow: scroll; */
+}
+
+.about-back-btn {
+	margin-top: 1rem;
+	background: none;
+	border: 2px solid #23b9ff;
+	border-radius: 0.3rem;
+	padding: 0.2rem 0.4rem;
+	cursor: pointer;
+	outline: none;
+	font-size: 1.2em;
+	color: #23b9ff;
 }
 
 .bonus-color {

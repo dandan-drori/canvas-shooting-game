@@ -7,7 +7,7 @@
 		<p>Points</p>
 		<p class="modal-highscore">Highscore: <span class="modal-highscore-value">0</span></p>
 		<div>
-			<button class="start-game-btn">Play Again</button>
+			<button class="start-game-btn" onClick="handleStartGameBtnClick()">Play Again</button>
 		</div>
 	</div>
 </div>
@@ -17,14 +17,17 @@
 		<h1 class="settings-modal-header">Menu</h1>
 		<ul class="nav-list">
 			<li class="nav-item">
-				<button class="nav-link about-btn">About</button>
+				<button class="nav-link about-btn" onClick="handleAboutBtnClick()">About</button>
 			</li>
 			<li class="nav-item">
-				<button class="nav-link rules-btn">Rules</button>
+				<button class="nav-link rules-btn" onClick="handleRulesBtnClick()">Rules</button>
+			</li>
+			<li class="nav-item">
+				<button class="nav-link contact-btn" onClick="handleContactBtnClick()">Contact</button>
 			</li>
 		</ul>
 		<div>
-			<button class="resume-btn">Resume</button>
+			<button class="resume-btn" onClick="handleResumeBtnClick()">Resume</button>
 		</div>
 	</div>
 </div>
@@ -34,7 +37,6 @@
 		<div class="rules-modal-scroll-wrapper">
 			<h1 class="rules-modal-header">Rules</h1>
 			<br />
-			<!-- <p>The objective is to survive as long as you can.</p> -->
 			<p>The game is comprised of the following pieces:</p>
 			<p>Player, Enemies and Bonuses.</p>
 			<h3>The Player:</h3>
@@ -71,7 +73,24 @@
 			<p>Effect: Lose game instantly, regardless of the Player's amount of life.</p>
 		</div>
 		<div>
-			<button class="rules-back-btn">Back</button>
+			<button class="rules-back-btn" onClick="handleRulesBackBtnClick()">Back</button>
+		</div>
+	</div>
+</div>
+
+<div class="about-modal">
+	<div class="about-modal-content-container">
+		<div class="about-modal-scroll-wrapper">
+			<h1 class="about-modal-header">About</h1>
+			<br />
+			<p>This game is based entirely on a pre-existing game made by <a href="https://www.youtube.com/channel/UC9Yp2yz6-pwhQuPlIDV_mjA">Chris Courses</a>.</p>
+			<p>This game adds an extensive layer of new features compared to the game it is based off.</p>
+			<p>This game was built for educational purposes only, to serve as a guide for future projects.</p>
+			<p>Any Suggestions, Request or Issues will be accepted and highly appreciated.</p>
+			<p>I, the creator of this game and its source code thereby grant permission to copy and use this product, to anyone who wishes to do so.</p>
+		</div>
+		<div>
+			<button class="about-back-btn" onClick="handleAboutBackBtnClick()">Back</button>
 		</div>
 	</div>
 </div>
@@ -83,7 +102,7 @@
 	<span class="lives-text">Lives: x<span class="lives-value">1</span><span> &#10084;</span></span>
 </div>
 <div>
-	<button class="settings-btn">settings</button>
+	<button class="settings-btn" onClick="handleSettingsBtnClick()">settings</button>
 </div>
 <div>
 	<span class="active-effect-text"><span class="active-effect"></span></span>
