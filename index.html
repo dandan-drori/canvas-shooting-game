@@ -1,8 +1,8 @@
 <meta name="viewport" content="width=device-width, user-scalable=no">
 <link rel="stylesheet" href="./index.css"></link>
 
-<div class="modal">
-	<div class="modal-content-container">
+<div class="modal base-modal">
+	<div class="modal-content-container base-modal-content-container">
 		<h1 class="modal-score-value">0</h1>
 		<p>Points</p>
 		<p class="modal-highscore">Highscore: <span class="modal-highscore-value">0</span></p>
@@ -12,9 +12,9 @@
 	</div>
 </div>
 
-<div class="settings-modal">
-	<div class="settings-modal-content-container">
-		<h1 class="settings-modal-header">Menu</h1>
+<div class="settings-modal base-modal">
+	<div class="settings-modal-content-container base-modal-content-container">
+		<h1 class="settings-modal-header base-modal-header">Menu</h1>
 		<ul class="nav-list">
 			<li class="nav-item">
 				<button class="nav-link about-btn" onClick="handleAboutBtnClick()">About</button>
@@ -32,10 +32,10 @@
 	</div>
 </div>
 
-<div class="rules-modal">
-	<div class="rules-modal-content-container">
-		<div class="rules-modal-scroll-wrapper">
-			<h1 class="rules-modal-header">Rules</h1>
+<div class="rules-modal base-modal">
+	<div class="rules-modal-content-container base-modal-content-container">
+		<div class="scroll-wrapper">
+			<h1 class="rules-modal-header base-modal-header">Rules</h1>
 			<br />
 			<p>The game is comprised of the following pieces:</p>
 			<p>Player, Enemies and Bonuses.</p>
@@ -73,24 +73,35 @@
 			<p>Effect: Lose game instantly, regardless of the Player's amount of life.</p>
 		</div>
 		<div>
-			<button class="rules-back-btn" onClick="handleRulesBackBtnClick()">Back</button>
+			<button class="rules-back-btn base-back-btn" onClick="handleRulesBackBtnClick()">Back</button>
 		</div>
 	</div>
 </div>
 
-<div class="about-modal">
-	<div class="about-modal-content-container">
-		<div class="about-modal-scroll-wrapper">
-			<h1 class="about-modal-header">About</h1>
+<div class="about-modal base-modal">
+	<div class="about-modal-content-container base-modal-content-container">
+			<h1 class="about-modal-header base-modal-header">About</h1>
 			<br />
+			<div class="scroll-wrapper">
 			<p>This game is based entirely on a pre-existing game made by <a href="https://www.youtube.com/channel/UC9Yp2yz6-pwhQuPlIDV_mjA">Chris Courses</a>.</p>
 			<p>This game adds an extensive layer of new features compared to the game it is based off.</p>
 			<p>This game was built for educational purposes only, to serve as a guide for future projects.</p>
 			<p>Any Suggestions, Request or Issues will be accepted and highly appreciated.</p>
 			<p>I, the creator of this game and its source code thereby grant permission to copy and use this product, to anyone who wishes to do so.</p>
-		</div>
+			</div>
 		<div>
-			<button class="about-back-btn" onClick="handleAboutBackBtnClick()">Back</button>
+			<button class="about-back-btn base-back-btn" onClick="handleAboutBackBtnClick()">Back</button>
+		</div>
+	</div>
+</div>
+
+<div class="contact-modal base-modal">
+	<div class="contact-modal-content-container base-modal-content-container">
+			<h1 class="contact-modal-header base-modal-header">Contact</h1>
+			<br />
+			<p>contact...</p>
+		<div>
+			<button class="contact-back-btn base-back-btn" onClick="handleContactBackBtnClick()">Back</button>
 		</div>
 	</div>
 </div>
@@ -103,6 +114,9 @@
 </div>
 <div>
 	<button class="settings-btn" onClick="handleSettingsBtnClick()">settings</button>
+</div>
+<div>
+	<span class="level-up-text"><span class="level-up"></span></span>
 </div>
 <div>
 	<span class="active-effect-text"><span class="active-effect"></span></span>

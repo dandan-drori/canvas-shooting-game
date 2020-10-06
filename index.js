@@ -10,22 +10,33 @@ const isMobile = canvas.width <= 768 ? true : false
 
 // get elements references
 const scoreEl = document.querySelector('.score-value')
+const livesEl = document.querySelector('.lives-value')
+const levelUpTextEl = document.querySelector('.level-up-text')
+const levelUpEl = document.querySelector('.level-up')
+const activeEffectTextEl = document.querySelector('.active-effect-text')
+const activeEffectEl = document.querySelector('.active-effect')
+// main modal
 const startGameBtn = document.querySelector('.start-game-btn')
 const modalEl = document.querySelector('.modal')
 const modalScoreEl = document.querySelector('.modal-score-value')
+const highscoreEl = document.querySelector('.modal-highscore-value')
+// settings modal
 const settingsModalEl = document.querySelector('.settings-modal')
 const settingsBtn = document.querySelector('.settings-btn')
-const livesEl = document.querySelector('.lives-value')
 const resumeBtn = document.querySelector('.resume-btn')
+// rules modal
 const rulesModalEl = document.querySelector('.rules-modal')
 const rulesBackBtn = document.querySelector('.rules-back-btn')
 const rulesBtn = document.querySelector('.rules-btn')
-const activeEffectEl = document.querySelector('.active-effect')
-const activeEffectTextEl = document.querySelector('.active-effect-text')
-const highscoreEl = document.querySelector('.modal-highscore-value')
+// about modal
 const aboutBtn = document.querySelector('.about-btn')
 const aboutModalEl = document.querySelector('.about-modal')
 const aboutBackBtn = document.querySelector('.about-back-btn')
+// contact modal
+const contactBtn = document.querySelector('.contact-btn')
+const contactModalEl = document.querySelector('.contact-modal')
+const contactBackBtn = document.querySelector('.contact-back-btn')
+
 class Player {
 	constructor(x, y, radius, color) {
 		this.x = x
@@ -40,6 +51,20 @@ class Player {
 		c.fillStyle = this.color
 		c.fill()
 	}
+
+	// levelUp() {
+	// 	if (!levelDisplayed) {
+	// 		levelUpEl.innerHTML = `Level ${currentLevel} Reached!`
+	// 		levelUpTextEl.classList.add('active')
+	// 		levelUpEl.classList.add('active')
+	// 		setTimeout(() => {
+	// 			levelUpTextEl.classList.remove('active')
+	// 			levelUpEl.classList.remove('active')
+	// 			levelUpEl.innerHTML = ''
+	// 			levelDisplayed = true
+	// 		}, 3000)
+	// 	}
+	// }
 }
 
 class Projectile {
@@ -141,6 +166,9 @@ class Bonus {
 		if (this.name === 'end-game') {
 			// cancel all animations
 			cancelAnimationFrame(animationId)
+			clearInterval(spawnEnemiesInterval)
+			clearInterval(spawnBonusesInterval)
+			window.removeEventListener('click', spawnProjectiles)
 			// show modal and update score on UI
 			modalEl.style.display = 'flex'
 			modalScoreEl.innerHTML = score
@@ -148,9 +176,12 @@ class Bonus {
 		activeEffectEl.innerHTML = `${this.name.toUpperCase()}!`
 		activeEffectTextEl.classList.add('active')
 		activeEffectEl.classList.add('active')
+		activeEffectTextEl.style.left = `${this.x}px`
+		activeEffectTextEl.style.top = `${this.y}px`
 		setTimeout(() => {
 			activeEffectTextEl.classList.remove('active')
 			activeEffectEl.classList.remove('active')
+			activeEffectEl.innerHTML = ''
 		}, 6000)
 	}
 }
@@ -189,12 +220,18 @@ class Particle {
 const x = canvas.width / 2
 const y = canvas.height / 2
 
+// initialize global variables to reset to when game restarts
 let player = new Player(x, y, 20, 'white')
 let projectiles = []
 let enemies = []
 let particles = []
 let bonuses = []
 let lives = 1
+let currentLevel = 1
+let isExplosiveRoundsActivated = false
+let isSlowActivated = false
+let isSharpShooterActivated = false
+let levelDisplayed = false
 
 // initialization function to be called when game starts/restarts
 const init = () => {
@@ -203,9 +240,14 @@ const init = () => {
 	enemies = []
 	particles = []
 	bonuses = []
+	levelTwo = false
+	levelThree = false
+	levelFour = false
+	levelFive = false
 	isExplosiveRoundsActivated = false
 	isSlowActivated = false
 	isSharpShooterActivated = false
+	levelDisplayed = false
 	score = 0
 	scoreEl.innerHTML = score
 	modalScoreEl.innerHTML = score
@@ -213,6 +255,27 @@ const init = () => {
 	livesEl.innerHTML = lives
 }
 
+// determine enemies interval time according to current level
+let enemiesIntervalTime =
+	currentLevel === 2
+		? 900
+		: currentLevel === 3
+		? 800
+		: currentLevel === 4
+		? 700
+		: currentLevel === 5
+		? 600
+		: currentLevel === 6
+		? 500
+		: currentLevel === 7
+		? 400
+		: currentLevel === 8
+		? 350
+		: currentLevel === 9
+		? 300
+		: currentLevel === 10
+		? 250
+		: 1000
 const spawnEnemiesIntervalFunction = () => {
 	// randomize between 5-30
 	const radius = Math.random() * (30 - 5) + 5
@@ -239,9 +302,48 @@ const spawnEnemiesIntervalFunction = () => {
 			y: Math.sin(angle) / 2,
 		}
 	} else {
+		// determine enemies velocity according to current level
 		velocity = {
-			x: Math.cos(angle),
-			y: Math.sin(angle),
+			x:
+				currentLevel === 2
+					? Math.cos(angle) * 1.1
+					: currentLevel === 3
+					? Math.cos(angle) * 1.2
+					: currentLevel === 4
+					? Math.cos(angle) * 1.3
+					: currentLevel === 5
+					? Math.cos(angle) * 1.4
+					: currentLevel === 6
+					? Math.cos(angle) * 1.5
+					: currentLevel === 7
+					? Math.cos(angle) * 1.6
+					: currentLevel === 8
+					? Math.cos(angle) * 1.65
+					: currentLevel === 9
+					? Math.cos(angle) * 1.7
+					: currentLevel === 10
+					? Math.cos(angle) * 1.75
+					: Math.cos(angle),
+			y:
+				currentLevel === 2
+					? Math.sin(angle) * 1.1
+					: currentLevel === 3
+					? Math.sin(angle) * 1.2
+					: currentLevel === 4
+					? Math.sin(angle) * 1.3
+					: currentLevel === 5
+					? Math.sin(angle) * 1.4
+					: currentLevel === 6
+					? Math.sin(angle) * 1.5
+					: currentLevel === 7
+					? Math.sin(angle) * 1.6
+					: currentLevel === 8
+					? Math.sin(angle) * 1.65
+					: currentLevel === 9
+					? Math.sin(angle) * 1.7
+					: currentLevel === 10
+					? Math.sin(angle) * 1.75
+					: Math.sin(angle),
 		}
 	}
 
@@ -250,7 +352,10 @@ const spawnEnemiesIntervalFunction = () => {
 
 let spawnEnemiesInterval
 const spawnEnemies = () => {
-	spawnEnemiesInterval = setInterval(spawnEnemiesIntervalFunction, 1000)
+	spawnEnemiesInterval = setInterval(
+		spawnEnemiesIntervalFunction,
+		enemiesIntervalTime
+	)
 }
 
 const spawnBonusesIntervalFunction = () => {
@@ -452,6 +557,37 @@ const animate = () => {
 							projectiles.splice(projectileIndex, 1)
 						}, 0)
 					}
+					// check score value and change currentLevel accordingly
+					if (score >= 0 && score < 10000) {
+						currentLevel = 1
+					}
+					if (score > 10000 && score < 20000) {
+						currentLevel = 2
+					}
+					if (score > 20000 && score < 30000) {
+						currentLevel = 3
+					}
+					if (score > 30000 && score < 40000) {
+						currentLevel = 4
+					}
+					if (score > 40000 && score < 50000) {
+						currentLevel = 5
+					}
+					if (score > 50000 && score < 60000) {
+						currentLevel = 6
+					}
+					if (score > 60000 && score < 70000) {
+						currentLevel = 7
+					}
+					if (score > 70000 && score < 80000) {
+						currentLevel = 8
+					}
+					if (score > 80000 && score < 90000) {
+						currentLevel = 9
+					}
+					if (score > 90000) {
+						currentLevel = 10
+					}
 				}
 			})
 		})
@@ -520,15 +656,13 @@ const spawnProjectiles = e => {
 	)
 }
 
-// spawn projectiles on click
-addEventListener('click', spawnProjectiles)
-
 // when restart/start btn is clicked, start game
 const handleStartGameBtnClick = () => {
 	init()
 	animate()
 	spawnEnemies()
 	spawnBonuses()
+	window.addEventListener('click', spawnProjectiles)
 	modalEl.style.display = 'none'
 	settingsModalEl.style.display = 'none'
 }
@@ -564,4 +698,12 @@ const handleAboutBtnClick = () => {
 
 const handleAboutBackBtnClick = () => {
 	aboutModalEl.style.display = 'none'
+}
+
+const handleContactBtnClick = () => {
+	contactModalEl.style.display = 'flex'
+}
+
+const handleContactBackBtnClick = () => {
+	contactModalEl.style.display = 'none'
 }
