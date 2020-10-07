@@ -173,15 +173,7 @@ class Bonus {
 			livesEl.innerHTML = lives
 		}
 		if (this.name === 'end-game') {
-			// cancel all animations
-			cancelAnimationFrame(animationId)
-			clearInterval(spawnEnemiesInterval)
-			clearInterval(spawnBonusesInterval)
-			window.removeEventListener('click', spawnProjectiles)
-			// show modal and update score on UI
-			modalEl.style.display = 'flex'
-			modalScoreEl.innerHTML = score
-			settingsBtn.setAttribute('disabled', 'true')
+			handleGameOver()
 		}
 		activeEffectEl.innerHTML = `${this.name.toUpperCase()}!`
 		activeEffectTextEl.classList.add('active')
@@ -469,32 +461,7 @@ const animate = () => {
 			// enemy hits player - end game - game over
 			if (dist - enemy.radius - player.radius < 1) {
 				if (lives === 1) {
-					// cancel all animations
-					cancelAnimationFrame(animationId)
-					// show modal and update score on UI
-					modalEl.style.display = 'flex'
-					modalScoreEl.innerHTML = score
-					settingsBtn.setAttribute('disabled', 'true')
-					// get currentHighScore from localStorage
-					const currentHighScore = localStorage.getItem('currentHighScore')
-					// if it exits:
-					if (currentHighScore !== null) {
-						// if score > currentHighScore:
-						if (score > parseInt(currentHighScore)) {
-							// replace currentHighScore in localStorage with score
-							localStorage.setItem('currentHighScore', score)
-							// update highscore in UI
-							highscoreEl.innerHTML = score
-						}
-						// else - don't do anything
-					} else {
-						// else - just save score to localStorage W/O check
-						// localStorage.setItem('currentHighScore', score)
-					}
-
-					// clear intervals for enemies and bonuses
-					clearInterval(spawnEnemiesInterval)
-					clearInterval(spawnBonusesInterval)
+					handleGameOver()
 				} else {
 					// lose one life and continue with the game
 					lives -= 1
@@ -737,4 +704,44 @@ const handleContactBtnClick = () => {
 
 const handleContactBackBtnClick = () => {
 	contactModalEl.style.display = 'none'
+}
+
+const handleGameOver = () => {
+	// cancel all animations
+	cancelAnimationFrame(animationId)
+	// remove event listener from window object
+	window.removeEventListener('click', spawnProjectiles)
+	// show modal and update score on UI
+	modalEl.style.display = 'flex'
+	modalScoreEl.innerHTML = score
+	// make sure settings button is disabled to prevent massive enemy spawn
+	settingsBtn.setAttribute('disabled', 'true')
+	// clear intervals for enemies and bonuses
+	clearInterval(spawnEnemiesInterval)
+	clearInterval(spawnBonusesInterval)
+	// get currentHighScore from localStorage
+	const currentHighScore = localStorage.getItem('currentHighScore')
+	// if it exits:
+	if (currentHighScore !== null) {
+		// if score > currentHighScore:
+		if (score > parseInt(currentHighScore)) {
+			// replace currentHighScore in localStorage with score
+			localStorage.setItem('currentHighScore', score)
+			// update highscore in UI
+			highscoreEl.innerHTML = score
+		} else {
+			// else - don't do anything
+			highscoreEl.innerHTML = currentHighScore
+		}
+	} else {
+		// else - just save score to localStorage W/O check
+		localStorage.setItem('currentHighScore', score)
+		highscoreEl.innerHTML = score
+	}
+}
+
+window.onload = () => {
+	if (localStorage.getItem('currentHighScore') !== null) {
+		highscoreEl.innerHTML = localStorage.getItem('currentHighScore')
+	}
 }

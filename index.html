@@ -54,23 +54,31 @@
 			<p>Each Bonus is a hollow square, with a different color.</p>
 			<p>When a Projectile hits a Bonus, a special effect takes place, as described bellow.</p>
 			<h4>Slow:</h4>
-			<p>Color: <span class="bonus-color slow"></span></p>
+			<p>Emoji: <span>❄️</span></p>
 			<p>Effect: Reduce all Enemies speed by half.</p>
 			<h4>Sharp Shooter:</h4>
-			<p>Color: <span class="bonus-color sharp-shooter"></span></p>
+			<p>Emoji: <span>⏩</span></p>
 			<p>Effect: Make the Player shoot Projectiles 20% faster.</p>
 			<h4>Explosive Rounds:</h4>
-			<p>Color: <span class="bonus-color explosive-rounds"></span></p>
+			<p>Emoji: <span>💥</span></p>
 			<p>Effect: When a Projectile hits an Enemy, it destroys it regardless of its size.</p>
 			<h4>Extra Life:</h4>
-			<p>Color: <span class="bonus-color extra-life"></span></p>
+			<p>Emoji: <span>❤️</span></p>
 			<p>Effect: Gain an extra life.</p>
 			<h4>Nuke:</h4>
-			<p>Color: <span class="bonus-color nuke"></span></p>
+			<p>Emoji: <span>☢️</span></p>
 			<p>Effect: Destroy all Enemies on the screen. Grants 1000 Points</p>
 			<h4>Skull:</h4>
-			<p>Color: <span class="bonus-color skull"></span></p>
+			<p>Emoji: <span>☠️</span></p>
 			<p>Effect: Lose game instantly, regardless of the Player's amount of life.</p>
+			<h3>Course of Game:</h3>
+			<p>The game start on Level 1, with 1 Life, and 0 Points in Score.</p>
+			<p>The Player is at the center of the screen, while Enemies begin to spawn at the edges of the screen every second and slowly move towards the Player.</p>
+			<p>When the Player hits an Enemy, 100 Points are added to the Score.</p>
+			<p>When the Player destroys an Enemy, 250 Points are added to the Score.</p>
+			<p>For each 10000 earned, the Level will increase by 1.</p>
+			<p>Each Level increase will make the Enemies spawn more frequently and make them move faster towards the Player.</p>
+			<p>The game ends when the Player has 1 Life left, and an Enemy hits the Player, or the Player shoots a Projectile that hits the Skull Bonus.</p>
 		</div>
 		<div>
 			<button class="rules-back-btn base-back-btn" onClick="handleRulesBackBtnClick()">Back</button>
