@@ -111,7 +111,7 @@ class Enemy {
 	}
 }
 class Bonus {
-	constructor(x, y, width, height, color, velocity, name) {
+	constructor(x, y, width, height, color, velocity, name, emoji) {
 		this.x = x
 		this.y = y
 		this.width = width
@@ -119,13 +119,20 @@ class Bonus {
 		this.color = color
 		this.velocity = velocity
 		this.name = name
+		this.emoji = emoji
 	}
 	draw() {
-		c.beginPath()
-		c.rect(this.x, this.y, this.width, this.height)
-		c.lineWidth = '1'
-		c.strokeStyle = this.color
-		c.stroke()
+		// rectangular bonuses
+		// c.beginPath()
+		// c.rect(this.x, this.y, this.width, this.height)
+		// c.lineWidth = '1'
+		// c.strokeStyle = this.color
+		// c.stroke()
+		// emoji based bonuses for better UX
+		c.font = '20px serif'
+		c.textAlign = 'center'
+		c.textBaseline = 'middle'
+		c.fillText(this.emoji, this.x, this.y)
 	}
 	update() {
 		this.draw()
@@ -360,12 +367,12 @@ const spawnEnemies = () => {
 const spawnBonusesIntervalFunction = () => {
 	// declare all bonuses types
 	const bonusTypes = [
-		{ name: 'slow', color: 'hsl(170, 50%, 50%)' },
-		{ name: 'sharp-shooter', color: 'hsl(220, 50%, 50%)' },
-		{ name: 'explosive-rounds', color: 'hsl(10, 50%, 50%)' },
-		{ name: 'extra-life', color: 'hsl(120, 50%, 50%)' },
-		{ name: 'nuke', color: 'hsl(60, 50%, 50%)' },
-		{ name: 'end-game', color: 'hsl(300, 50%, 50%)' },
+		{ name: 'slow', color: 'hsl(170, 50%, 50%)', emoji: '❄️' },
+		{ name: 'sharp-shooter', color: 'hsl(220, 50%, 50%)', emoji: '⏩' },
+		{ name: 'explosive-rounds', color: 'hsl(10, 50%, 50%)', emoji: '💥' },
+		{ name: 'extra-life', color: 'hsl(120, 50%, 50%)', emoji: '❤️' },
+		{ name: 'nuke', color: 'hsl(60, 50%, 50%)', emoji: '☢️' },
+		{ name: 'end-game', color: 'hsl(300, 50%, 50%)', emoji: '☠️' },
 	]
 	let x
 	let y
@@ -386,6 +393,8 @@ const spawnBonusesIntervalFunction = () => {
 	// choose a bonusType at random
 	const randomBonus = bonusTypes[Math.floor(Math.random() * 6)]
 	const color = randomBonus.color
+	const name = randomBonus.name
+	const emoji = randomBonus.emoji
 
 	let angle
 
@@ -403,7 +412,7 @@ const spawnBonusesIntervalFunction = () => {
 		y: Math.sin(angle),
 	}
 
-	bonuses.push(new Bonus(x, y, 15, 15, color, velocity, randomBonus.name))
+	bonuses.push(new Bonus(x, y, 15, 15, color, velocity, name, emoji))
 }
 
 let spawnBonusesInterval
