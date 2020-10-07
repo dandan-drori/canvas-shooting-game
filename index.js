@@ -17,6 +17,8 @@ const currentLevelEl = document.querySelector('.current-level')
 const currentLevelTextEl = document.querySelector('.current-level-text')
 const activeEffectTextEl = document.querySelector('.active-effect-text')
 const activeEffectEl = document.querySelector('.active-effect')
+const healthBarContainer = document.querySelector('.health-bar-container')
+const healthBarEl = document.querySelector('.health-bar')
 // main modal
 const startGameBtn = document.querySelector('.start-game-btn')
 const modalEl = document.querySelector('.modal')
@@ -38,6 +40,9 @@ const aboutBackBtn = document.querySelector('.about-back-btn')
 const contactBtn = document.querySelector('.contact-btn')
 const contactModalEl = document.querySelector('.contact-modal')
 const contactBackBtn = document.querySelector('.contact-back-btn')
+// win modal
+const winModalEl = document.querySelector('.win-modal')
+const winModalScoreEl = document.querySelector('.win-modal-score')
 
 class Player {
 	constructor(x, y, radius, color) {
@@ -53,20 +58,6 @@ class Player {
 		c.fillStyle = this.color
 		c.fill()
 	}
-
-	// levelUp() {
-	// 	if (!levelDisplayed) {
-	// 		levelUpEl.innerHTML = `Level ${currentLevel} Reached!`
-	// 		levelUpTextEl.classList.add('active')
-	// 		levelUpEl.classList.add('active')
-	// 		setTimeout(() => {
-	// 			levelUpTextEl.classList.remove('active')
-	// 			levelUpEl.classList.remove('active')
-	// 			levelUpEl.innerHTML = ''
-	// 			levelDisplayed = true
-	// 		}, 3000)
-	// 	}
-	// }
 }
 
 class Projectile {
@@ -218,6 +209,79 @@ class Particle {
 		this.alpha -= 0.01
 	}
 }
+class Boss {
+	constructor(x, y, radius, color, health) {
+		this.x = x
+		this.y = y
+		this.radius = radius
+		this.color = color
+		this.angle = Math.PI / 2
+		this.velocity = { x: Math.cos(this.angle), y: Math.sin(this.angle) }
+		this.health = health
+	}
+
+	draw() {
+		c.beginPath()
+		c.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false)
+		c.fillStyle = this.color
+		c.fill()
+	}
+
+	update() {
+		this.draw()
+		if (
+			this.x > 0 &&
+			this.x < 0.2 * canvas.width &&
+			this.y > 0.9 * canvas.height &&
+			this.y < canvas.height
+		) {
+			this.angle = 0
+			this.velocity = { x: Math.cos(0), y: Math.sin(0) }
+		}
+		if (
+			this.x > 0.9 * canvas.width &&
+			this.x < canvas.width &&
+			this.y > 0.9 * canvas.height &&
+			this.y < canvas.height
+		) {
+			this.angle = -(Math.PI / 2)
+			this.velocity = {
+				x: Math.cos(-(Math.PI / 2)),
+				y: Math.sin(-(Math.PI / 2)),
+			}
+		}
+		if (
+			this.x > 0.9 * canvas.width &&
+			this.x < canvas.width &&
+			this.y > 0 &&
+			this.y < 0.1 * canvas.height
+		) {
+			this.angle = Math.PI
+			this.velocity = {
+				x: Math.cos(Math.PI),
+				y: Math.sin(Math.PI),
+			}
+		}
+		if (
+			this.x > 0 * canvas.width &&
+			this.x < 0.2 * canvas.width &&
+			this.y > 0 &&
+			this.y < 0.1 * canvas.height
+		) {
+			this.angle = Math.PI / 2
+			this.velocity = {
+				x: Math.cos(Math.PI / 2),
+				y: Math.sin(Math.PI / 2),
+			}
+		}
+		// update current location
+		this.x = this.x + this.velocity.x
+		this.y = this.y + this.velocity.y
+		// update current location of health bar
+		healthBarContainer.style.top = `${this.y}px`
+		healthBarContainer.style.left = `${this.x}px`
+	}
+}
 
 const x = canvas.width / 2
 const y = canvas.height / 2
@@ -228,6 +292,7 @@ let projectiles = []
 let enemies = []
 let particles = []
 let bonuses = []
+let bosses = []
 let lives = 1
 let currentLevel = 1
 let isExplosiveRoundsActivated = false
@@ -242,6 +307,7 @@ const init = () => {
 	enemies = []
 	particles = []
 	bonuses = []
+	bosses = []
 	isExplosiveRoundsActivated = false
 	isSlowActivated = false
 	isSharpShooterActivated = false
@@ -344,6 +410,30 @@ const spawnEnemiesIntervalFunction = () => {
 					? Math.sin(angle) * 1.9
 					: Math.sin(angle),
 		}
+	}
+
+	enemies.push(new Enemy(x, y, radius, color, velocity))
+}
+
+let spawnBossEnemiesInterval
+const spawnBossEnemies = () => {
+	spawnBossEnemiesInterval = setInterval(spawnBossEnemiesIntervalFunction, 900)
+}
+
+const spawnBossEnemiesIntervalFunction = () => {
+	// randomize between 5-30
+	const radius = Math.random() * (30 - 5) + 5
+	let x = bosses[0].x
+	let y = bosses[0].y
+
+	// randomize boss enemy color
+	const color = `hsl(${Math.random() * 360}, 50%, 50%)`
+
+	const angle = Math.atan2(canvas.height / 2 - y, canvas.width / 2 - x)
+
+	const velocity = {
+		x: Math.cos(angle),
+		y: Math.sin(angle),
 	}
 
 	enemies.push(new Enemy(x, y, radius, color, velocity))
@@ -585,6 +675,12 @@ const animate = () => {
 						currentLevelEl.innerHTML = '10'
 						currentLevelEl.style.color = `hsl(0, 50%, 50%)`
 					}
+					if (score === 100000 || score === 100050) {
+						clearInterval(spawnEnemiesInterval)
+						clearInterval(spawnBonusesInterval)
+						spawnBoss()
+						spawnBossEnemies()
+					}
 				}
 			})
 		})
@@ -592,13 +688,25 @@ const animate = () => {
 		bonuses.forEach((bonus, index) => {
 			bonus.update()
 
+			// remove bonuses once they pass the edges of the screen
+			if (
+				bonus.x + bonus.width < 0 ||
+				bonus.x - bonus.width > canvas.width ||
+				bonus.y + bonus.width < 0 ||
+				bonus.y - bonus.width > canvas.height
+			) {
+				setTimeout(() => {
+					bonuses.splice(index, 1)
+				}, 0)
+			}
+
 			// for each bonus, loop over projectiles
 			projectiles.forEach((projectile, projectileIndex) => {
 				// measure distance between bonus and all projectiles
 				const dist = Math.hypot(projectile.x - bonus.x, projectile.y - bonus.y)
 
 				// projectile hits bonus
-				if (dist - 10 - projectile.radius < 1) {
+				if (dist - 14 - projectile.radius < 1) {
 					// add particles effect
 					for (let i = 0; i < 14 * 2; i++) {
 						particles.push(
@@ -625,7 +733,58 @@ const animate = () => {
 				}
 			})
 		})
+
+		bosses.forEach((boss, index) => {
+			boss.update()
+
+			projectiles.forEach((projectile, projectileIndex) => {
+				// measure distance between boss and all projectiles
+				const dist = Math.hypot(projectile.x - boss.x, projectile.y - boss.y)
+
+				if (dist - boss.radius - projectile.radius < 1) {
+					// determine if boss should lose health or be destroyed
+					if (boss.health > 1) {
+						boss.health -= 1
+						healthBarEl.style.width = `${Math.floor(boss.health / 5)}%`
+						// increase score by 250
+						score += 100
+						scoreEl.innerHTML = score
+
+						// remove projectile
+						setTimeout(() => {
+							projectiles.splice(projectileIndex, 1)
+						}, 0)
+					} else {
+						// increase score by 10000
+						score += 10000
+						scoreEl.innerHTML = score
+
+						// remove boss and projectile
+						setTimeout(() => {
+							bosses.splice(index, 1)
+							projectiles.splice(projectileIndex, 1)
+						}, 0)
+
+						// win game
+						handleWinGame()
+					}
+				}
+			})
+		})
 	}
+}
+
+const spawnBoss = () => {
+	const radius = 60
+
+	let x = 0.1 * canvas.width
+	let y = 0 - radius
+
+	const color = `hsl(0, 50%, 50%)`
+
+	const health = 500
+
+	bosses.push(new Boss(x, y, radius, color, health))
 }
 
 // spawn projectiles function to be used in event listener
@@ -671,6 +830,7 @@ const handleSettingsBtnClick = () => {
 	window.removeEventListener('click', spawnProjectiles)
 	clearInterval(spawnEnemiesInterval)
 	clearInterval(spawnBonusesInterval)
+	clearInterval(spawnBossEnemiesInterval)
 }
 
 const handleResumeBtnClick = () => {
@@ -678,8 +838,12 @@ const handleResumeBtnClick = () => {
 	isGamePaused = false
 	window.addEventListener('click', spawnProjectiles)
 	animate()
-	spawnEnemies()
-	spawnBonuses()
+	if (score > 100000) {
+		spawnBossEnemies()
+	} else {
+		spawnEnemies()
+		spawnBonuses()
+	}
 }
 
 const handleRulesBtnClick = () => {
@@ -719,9 +883,45 @@ const handleGameOver = () => {
 	// clear intervals for enemies and bonuses
 	clearInterval(spawnEnemiesInterval)
 	clearInterval(spawnBonusesInterval)
+	clearInterval(spawnBossEnemiesInterval)
 	// get currentHighScore from localStorage
 	const currentHighScore = localStorage.getItem('currentHighScore')
 	// if it exits:
+	if (currentHighScore !== null) {
+		// if score > currentHighScore:
+		if (score > parseInt(currentHighScore)) {
+			// replace currentHighScore in localStorage with score
+			localStorage.setItem('currentHighScore', score)
+			// update highscore in UI
+			highscoreEl.innerHTML = score
+		} else {
+			// else - don't do anything
+			highscoreEl.innerHTML = currentHighScore
+		}
+	} else {
+		// else - just save score to localStorage W/O check
+		localStorage.setItem('currentHighScore', score)
+		highscoreEl.innerHTML = score
+	}
+}
+
+const handleWinGame = () => {
+	// cancel all animations
+	cancelAnimationFrame(animationId)
+	// remove event listener from window object
+	window.removeEventListener('click', spawnProjectiles)
+	// show modal and update score on UI
+	winModalEl.style.display = 'flex'
+	winModalScoreEl.innerHTML = score
+	// make sure settings button is disabled to prevent massive enemy spawn
+	settingsBtn.setAttribute('disabled', 'true')
+	// clear intervals for enemies and bonuses
+	clearInterval(spawnEnemiesInterval)
+	clearInterval(spawnBonusesInterval)
+	clearInterval(spawnBossEnemiesInterval)
+	// get currentHighScore from localStorage
+	const currentHighScore = localStorage.getItem('currentHighScore')
+	// if it exists:
 	if (currentHighScore !== null) {
 		// if score > currentHighScore:
 		if (score > parseInt(currentHighScore)) {

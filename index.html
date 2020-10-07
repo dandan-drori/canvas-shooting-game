@@ -12,6 +12,17 @@
 	</div>
 </div>
 
+<div class="win-modal base-modal">
+	<div class="win-modal-content-container base-modal-content-container">
+		<h1 class="win-modal-score">0</h1>
+		<p>Points</p>
+		<p class="win-modal-highscore-text">Highscore: <span class="win-modal-highscore">0</span></p>
+		<div>
+			<button class="start-game-btn" onClick="handleStartGameBtnClick()">Play Again</button>
+		</div>
+	</div>
+</div>
+
 <div class="settings-modal base-modal">
 	<div class="settings-modal-content-container base-modal-content-container">
 		<h1 class="settings-modal-header base-modal-header">Menu</h1>
@@ -108,8 +119,8 @@
 			<h1 class="contact-modal-header base-modal-header">Contact</h1>
 			<br />
 			<form name="contact" class="contact-form" method="POST" data-netlify="true">
-				<input type="text" placeholder="Full Name*" class="contact-input" required>
-				<input type="email" placeholder="Email*" class="contact-input" required>
+				<input type="text" name="name" placeholder="Full Name*" class="contact-input" required>
+				<input type="email" name="email" placeholder="Email*" class="contact-input" required>
 				<textarea class="contact-textarea" name="message" placeholder="Enter Your Message Here...*" required></textarea>
 				<button type="submit" class="contact-submit">Send</button>	
 			</form>
@@ -136,6 +147,9 @@
 </div>
 <div>
 	<span class="active-effect-text"><span class="active-effect"></span></span>
+</div>
+<div>
+	<span class="health-bar-container"><span class="health-bar"></span></span>
 </div>
 <canvas></canvas>
 
