@@ -13,6 +13,8 @@ const scoreEl = document.querySelector('.score-value')
 const livesEl = document.querySelector('.lives-value')
 const levelUpTextEl = document.querySelector('.level-up-text')
 const levelUpEl = document.querySelector('.level-up')
+const currentLevelEl = document.querySelector('.current-level')
+const currentLevelTextEl = document.querySelector('.current-level-text')
 const activeEffectTextEl = document.querySelector('.active-effect-text')
 const activeEffectEl = document.querySelector('.active-effect')
 // main modal
@@ -176,13 +178,13 @@ class Bonus {
 		activeEffectEl.innerHTML = `${this.name.toUpperCase()}!`
 		activeEffectTextEl.classList.add('active')
 		activeEffectEl.classList.add('active')
-		activeEffectTextEl.style.left = `${this.x}px`
-		activeEffectTextEl.style.top = `${this.y}px`
+		activeEffectTextEl.style.left = `${Math.floor(this.x)}px`
+		activeEffectTextEl.style.top = `${Math.floor(this.y) - 100}px`
 		setTimeout(() => {
 			activeEffectTextEl.classList.remove('active')
 			activeEffectEl.classList.remove('active')
 			activeEffectEl.innerHTML = ''
-		}, 6000)
+		}, 2000)
 	}
 }
 
@@ -240,14 +242,11 @@ const init = () => {
 	enemies = []
 	particles = []
 	bonuses = []
-	levelTwo = false
-	levelThree = false
-	levelFour = false
-	levelFive = false
 	isExplosiveRoundsActivated = false
 	isSlowActivated = false
 	isSharpShooterActivated = false
-	levelDisplayed = false
+	currentLevel = 1
+	currentLevelEl.innerHTML = 1
 	score = 0
 	scoreEl.innerHTML = score
 	modalScoreEl.innerHTML = score
@@ -270,11 +269,11 @@ let enemiesIntervalTime =
 		: currentLevel === 7
 		? 400
 		: currentLevel === 8
-		? 350
-		: currentLevel === 9
 		? 300
-		: currentLevel === 10
+		: currentLevel === 9
 		? 250
+		: currentLevel === 10
+		? 200
 		: 1000
 const spawnEnemiesIntervalFunction = () => {
 	// randomize between 5-30
@@ -318,11 +317,11 @@ const spawnEnemiesIntervalFunction = () => {
 					: currentLevel === 7
 					? Math.cos(angle) * 1.6
 					: currentLevel === 8
-					? Math.cos(angle) * 1.65
-					: currentLevel === 9
 					? Math.cos(angle) * 1.7
+					: currentLevel === 9
+					? Math.cos(angle) * 1.8
 					: currentLevel === 10
-					? Math.cos(angle) * 1.75
+					? Math.cos(angle) * 1.9
 					: Math.cos(angle),
 			y:
 				currentLevel === 2
@@ -338,11 +337,11 @@ const spawnEnemiesIntervalFunction = () => {
 					: currentLevel === 7
 					? Math.sin(angle) * 1.6
 					: currentLevel === 8
-					? Math.sin(angle) * 1.65
-					: currentLevel === 9
 					? Math.sin(angle) * 1.7
+					: currentLevel === 9
+					? Math.sin(angle) * 1.8
 					: currentLevel === 10
-					? Math.sin(angle) * 1.75
+					? Math.sin(angle) * 1.9
 					: Math.sin(angle),
 		}
 	}
@@ -470,7 +469,7 @@ const animate = () => {
 					// if it exits:
 					if (currentHighScore !== null) {
 						// if score > currentHighScore:
-						if (score > +currentHighScore) {
+						if (score > parseInt(currentHighScore)) {
 							// replace currentHighScore in localStorage with score
 							localStorage.setItem('currentHighScore', score)
 							// update highscore in UI
@@ -560,33 +559,53 @@ const animate = () => {
 					// check score value and change currentLevel accordingly
 					if (score >= 0 && score < 10000) {
 						currentLevel = 1
+						currentLevelEl.innerHTML = '1'
+						currentLevelEl.style.color = `hsl(120, 50%, 50%)`
 					}
 					if (score > 10000 && score < 20000) {
 						currentLevel = 2
+						currentLevelEl.innerHTML = '2'
+						currentLevelEl.style.color = `hsl(90, 50%, 50%)`
 					}
 					if (score > 20000 && score < 30000) {
 						currentLevel = 3
+						currentLevelEl.innerHTML = '3'
+						currentLevelEl.style.color = `hsl(70, 50%, 50%)`
 					}
 					if (score > 30000 && score < 40000) {
 						currentLevel = 4
+						currentLevelEl.innerHTML = '4'
+						currentLevelEl.style.color = `hsl(60, 50%, 50%)`
 					}
 					if (score > 40000 && score < 50000) {
 						currentLevel = 5
+						currentLevelEl.innerHTML = '5'
+						currentLevelEl.style.color = `hsl(50, 50%, 50%)`
 					}
 					if (score > 50000 && score < 60000) {
 						currentLevel = 6
+						currentLevelEl.innerHTML = '6'
+						currentLevelEl.style.color = `hsl(40, 50%, 50%)`
 					}
 					if (score > 60000 && score < 70000) {
 						currentLevel = 7
+						currentLevelEl.innerHTML = '7'
+						currentLevelEl.style.color = `hsl(30, 50%, 50%)`
 					}
 					if (score > 70000 && score < 80000) {
 						currentLevel = 8
+						currentLevelEl.innerHTML = '8'
+						currentLevelEl.style.color = `hsl(20, 50%, 50%)`
 					}
 					if (score > 80000 && score < 90000) {
 						currentLevel = 9
+						currentLevelEl.innerHTML = '9'
+						currentLevelEl.style.color = `hsl(10, 50%, 50%)`
 					}
 					if (score > 90000) {
 						currentLevel = 10
+						currentLevelEl.innerHTML = '10'
+						currentLevelEl.style.color = `hsl(0, 50%, 50%)`
 					}
 				}
 			})

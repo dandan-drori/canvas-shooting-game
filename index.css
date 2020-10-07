@@ -105,8 +105,9 @@ body {
 .settings-btn {
 	position: fixed;
 	right: 0;
+	bottom: 0;
 	margin-right: 2rem;
-	margin-top: 1rem;
+	margin-bottom: 1rem;
 	background: none;
 	color: white;
 	border: none;
@@ -251,26 +252,44 @@ body {
 .active-effect-text {
 	position: fixed;
 	color: rgba(255, 255, 255, 0.6);
-	left: 50%;
 	font-size: 1.3em;
 	margin-left: 2rem;
 	margin-top: 3rem;
 	user-select: none;
 	-moz-user-select: none;
 	-webkit-user-select: none;
-	transition: transform 5000ms ease-in-out, opacity 1500ms ease-in-out;
-	opacity: 0;
-	transform: translateX(-70%) translateY(50px) scale(0.5, 0.5);
+	transition: transform 1000ms ease-in-out, opacity 1000ms ease-in-out;
+	transform: translateX(-75%) translateY(0px) scale(0.6, 0.6);
 }
 
 .active-effect {
-	opacity: 0;
-	transform: translateX(-70%) translateY(0px) scale(0.5, 0.5);
-	transition: transform 5000ms ease-in-out, opacity 1500ms ease-in-out;
+	opacity: 1;
+	transform: translateY(20px) scale(0.9, 0.9);
+	transition: transform 1000ms ease-in-out, opacity 1000ms ease-in-out;
 }
 
 .modal-highscore {
 	color: #555;
+}
+
+.current-level-text {
+	position: fixed;
+	color: white;
+	font-size: 1em;
+	right: 0;
+	margin-right: 2rem;
+	margin-top: 1rem;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+.current-level {
+	position: fixed;
+	color: white;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
 }
 
 @media only screen and (max-width: 768px) {
