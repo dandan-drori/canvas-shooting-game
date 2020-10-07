@@ -181,6 +181,7 @@ class Bonus {
 			// show modal and update score on UI
 			modalEl.style.display = 'flex'
 			modalScoreEl.innerHTML = score
+			settingsBtn.setAttribute('disabled', 'true')
 		}
 		activeEffectEl.innerHTML = `${this.name.toUpperCase()}!`
 		activeEffectTextEl.classList.add('active')
@@ -473,6 +474,7 @@ const animate = () => {
 					// show modal and update score on UI
 					modalEl.style.display = 'flex'
 					modalScoreEl.innerHTML = score
+					settingsBtn.setAttribute('disabled', 'true')
 					// get currentHighScore from localStorage
 					const currentHighScore = localStorage.getItem('currentHighScore')
 					// if it exits:
@@ -693,6 +695,7 @@ const handleStartGameBtnClick = () => {
 	window.addEventListener('click', spawnProjectiles)
 	modalEl.style.display = 'none'
 	settingsModalEl.style.display = 'none'
+	settingsBtn.removeAttribute('disabled')
 }
 
 const handleSettingsBtnClick = () => {
