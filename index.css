@@ -292,6 +292,36 @@ body {
 	-webkit-user-select: none;
 }
 
+.contact-form {
+	display: flex;
+	flex-direction: column;
+}
+
+.contact-input {
+	padding: 0.3rem 0.5rem;
+	margin-bottom: 1rem;
+	border-radius: 0.3rem;
+	border: 1px solid #23b9ff;
+}
+
+.contact-textarea {
+	padding: 0.3rem 0.5rem;
+	margin-bottom: 1rem;
+	border-radius: 0.3rem;
+	border: 1px solid #23b9ff;
+}
+
+.contact-submit {
+	border-radius: 0.3rem;
+	padding: 0.3rem 0;
+	background: none;
+	border: 2px solid #ff5f1f;
+	color: #ff5f1f;
+	font-size: 1.1em;
+	font-weight: 600;
+	cursor: pointer;
+}
+
 @media only screen and (max-width: 768px) {
 	.base-modal-content-container {
 		padding: 2rem 5rem;

@@ -107,7 +107,12 @@
 	<div class="contact-modal-content-container base-modal-content-container">
 			<h1 class="contact-modal-header base-modal-header">Contact</h1>
 			<br />
-			<p>contact...</p>
+			<form name="contact" class="contact-form" method="POST" data-netlify="true">
+				<input type="text" placeholder="Full Name*" class="contact-input" required>
+				<input type="email" placeholder="Email*" class="contact-input" required>
+				<textarea class="contact-textarea" name="message" placeholder="Enter Your Message Here...*" required></textarea>
+				<button type="submit" class="contact-submit">Send</button>	
+			</form>
 		<div>
 			<button class="contact-back-btn base-back-btn" onClick="handleContactBackBtnClick()">Back</button>
 		</div>
@@ -124,7 +129,7 @@
 	<span class="current-level-text">Level:<span class="current-level">1</span></span>
 </div>
 <div>
-	<button class="settings-btn" onClick="handleSettingsBtnClick()">settings</button>
+	<button class="settings-btn" disabled="true" onClick="handleSettingsBtnClick()">settings</button>
 </div>
 <div>
 	<span class="level-up-text"><span class="level-up"></span></span>
