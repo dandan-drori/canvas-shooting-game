@@ -1,0 +1,353 @@
+body {
+	margin: 0;
+	padding: 0;
+	font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	box-sizing: border-box;
+	background-color: black;
+}
+
+.score-text {
+	position: fixed;
+	color: white;
+	font-size: 1em;
+	margin-left: 2rem;
+	margin-top: 1rem;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+.lives-text {
+	position: fixed;
+	color: white;
+	right: 50%;
+	transform: translateX(50%);
+	font-size: 1em;
+	margin-top: 1rem;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+.base-modal {
+	align-items: center;
+	justify-content: center;
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.base-modal-content-container {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background-color: white;
+	max-width: 50%;
+	max-height: 80%;
+	padding: 2rem 10rem;
+	border-radius: 0.5rem;
+}
+
+.base-modal-header {
+	line-height: 0;
+	margin-bottom: 1rem;
+}
+
+.base-back-btn {
+	margin-top: 1rem;
+	background: none;
+	border: 2px solid #23b9ff;
+	border-radius: 0.3rem;
+	padding: 0.2rem 0.4rem;
+	cursor: pointer;
+	outline: none;
+	font-size: 1.2em;
+	color: #23b9ff;
+}
+
+.modal {
+	display: flex;
+}
+
+.modal-content-container {
+	display: flex;
+}
+
+.modal-content-container h1 {
+	line-height: 0;
+}
+
+.modal-content-container p {
+	font-size: 0.9em;
+	color: #555;
+	line-height: 0;
+	margin-bottom: 2rem;
+}
+
+.start-game-btn {
+	background: none;
+	border: 2px solid #23b9ff;
+	border-radius: 0.3rem;
+	padding: 0.3rem 0.5rem;
+	cursor: pointer;
+	outline: none;
+	font-size: 1.4em;
+	color: #23b9ff;
+}
+
+.start-game-btn:hover {
+	color: #109ddf;
+	border: 2px solid #109ddf;
+	opacity: 0.9;
+}
+
+.settings-btn {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	margin-right: 2rem;
+	margin-bottom: 1rem;
+	background: none;
+	color: white;
+	border: none;
+	outline: none;
+	cursor: pointer;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+.settings-modal {
+	display: none;
+}
+
+.settings-modal-content-container {
+	display: flex;
+}
+
+.settings-modal-content-container p {
+	font-size: 0.9em;
+	color: #555;
+	line-height: 0;
+	margin-bottom: 2rem;
+}
+
+.resume-btn {
+	background: none;
+	border: 2px solid #23b9ff;
+	border-radius: 0.3rem;
+	padding: 0.3rem 0.5rem;
+	cursor: pointer;
+	outline: none;
+	font-size: 1.4em;
+	color: #23b9ff;
+}
+
+.resume-btn:hover {
+	color: #109ddf;
+	border: 2px solid #109ddf;
+	opacity: 0.9;
+}
+
+.nav-item {
+	list-style: none;
+	transform: translateX(-37%);
+	padding-bottom: 0.2rem;
+}
+
+.nav-link {
+	background: none;
+	outline: none;
+	cursor: pointer;
+	border: none;
+	font-size: 1.5em;
+}
+
+.rules-modal {
+	display: none;
+}
+
+.rules-modal-content-container {
+	display: flex;
+}
+
+.scroll-wrapper {
+	overflow: scroll;
+}
+
+.about-modal {
+	display: none;
+}
+
+.about-modal-content-container {
+	display: flex;
+}
+
+.contact-modal {
+	display: none;
+}
+
+.contact-modal-content-container {
+	display: flex;
+}
+
+.win-modal {
+	display: none;
+}
+
+.win-modal-content-container {
+	display: flex;
+}
+
+.bonus-color {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	padding: 0.5rem;
+}
+
+.slow {
+	background-color: hsl(170, 50%, 50%);
+}
+
+.sharp-shooter {
+	background-color: hsl(220, 50%, 50%);
+}
+
+.explosive-rounds {
+	background-color: hsl(10, 50%, 50%);
+}
+
+.extra-life {
+	background-color: hsl(120, 50%, 50%);
+}
+
+.nuke {
+	background-color: hsl(60, 50%, 50%);
+}
+
+.skull {
+	background-color: hsl(300, 50%, 50%);
+}
+
+.level-up-text {
+	position: fixed;
+	color: rgba(255, 255, 255, 0.6);
+	left: 50%;
+	font-size: 2em;
+	margin-left: 2rem;
+	margin-top: 3rem;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	transition: transform 5000ms ease-in-out, opacity 1500ms ease-in-out;
+	opacity: 0;
+	transform: translateX(-70%) translateY(50px) scale(0.5, 0.5);
+}
+
+.level-up {
+	opacity: 0;
+	transform: translateX(-70%) translateY(0px) scale(0.5, 0.5);
+	transition: transform 5000ms ease-in-out, opacity 1500ms ease-in-out;
+}
+
+.active {
+	opacity: 1;
+	transform: translateX(-70%) translateY(0px) scale(0.9, 0.9);
+}
+
+.active-effect-text {
+	position: fixed;
+	color: rgba(255, 255, 255, 0.6);
+	font-size: 1.3em;
+	margin-left: 2rem;
+	margin-top: 3rem;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	transition: transform 1000ms ease-in-out, opacity 1000ms ease-in-out;
+	transform: translateX(-75%) translateY(0px) scale(0.6, 0.6);
+}
+
+.active-effect {
+	opacity: 1;
+	transform: translateY(20px) scale(0.9, 0.9);
+	transition: transform 1000ms ease-in-out, opacity 1000ms ease-in-out;
+}
+
+.modal-highscore {
+	color: #555;
+}
+
+.current-level-text {
+	position: fixed;
+	color: white;
+	font-size: 1em;
+	right: 0;
+	margin-right: 2rem;
+	margin-top: 1rem;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+.current-level {
+	position: fixed;
+	color: white;
+	user-select: none;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+}
+
+.contact-form {
+	display: flex;
+	flex-direction: column;
+}
+
+.contact-input {
+	padding: 0.3rem 0.5rem;
+	margin-bottom: 1rem;
+	border-radius: 0.3rem;
+	border: 1px solid #23b9ff;
+}
+
+.contact-textarea {
+	padding: 0.3rem 0.5rem;
+	margin-bottom: 1rem;
+	border-radius: 0.3rem;
+	border: 1px solid #23b9ff;
+}
+
+.contact-submit {
+	border-radius: 0.3rem;
+	padding: 0.3rem 0;
+	background: none;
+	border: 2px solid #ff5f1f;
+	color: #ff5f1f;
+	font-size: 1.1em;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.health-bar-container {
+	position: fixed;
+	background: none;
+	border: 1px solid white;
+	width: 200px;
+	height: 20px;
+	transform: translateX(-50%) translateY(-390%);
+}
+
+.health-bar {
+	display: inline-block;
+	width: 100%;
+	height: 20px;
+	background-color: #33ee33;
+}
+
+@media only screen and (max-width: 768px) {
+	.base-modal-content-container {
+		padding: 2rem 5rem;
+	}
+}
